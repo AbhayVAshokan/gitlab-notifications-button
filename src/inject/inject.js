@@ -10,9 +10,21 @@ setInterval(function () {
 
       const button = document.createElement("button");
       button.innerHTML = bellIcon;
-      button.classList.add("hide-collapsed", "btn-icon", "!gl-align-top", "btn", "gl-button", "btn-default", "btn-md", "btn-default-secondary");
+      button.classList.add(
+        "hide-collapsed",
+        "btn-icon",
+        "!gl-align-top",
+        "btn",
+        "gl-button",
+        "btn-default",
+        "btn-md",
+        "btn-default-secondary",
+      );
 
       const lastCell = mr.querySelector("[role='cell']:last-child > div");
       if (lastCell) lastCell.appendChild(button);
+
+      const ciIcon = mr.querySelector("a.ci-icon");
+      if (ciIcon) ciIcon.style.alignSelf = "center";
     });
 }, 1000);
