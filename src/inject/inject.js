@@ -46,9 +46,44 @@ const getSubscribedStates = async (mergeRequests) => {
   }));
 };
 
+const toggleSubscription = async (fullPath, iid, currentlySubscribed) => {
+  const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+  const mutation = `
+    mutation {
+      mergeRequestSetSubscription(input: {
+        projectPath: "${fullPath}",
+        iid: "${iid}",
+        subscribedState: ${!currentlySubscribed}
+      }) {
+        mergeRequest {
+          id
+          subscribed
+        }
+        errors
+      }
+    }
+  `;
+  const response = await fetch("https://gitlab.com/api/graphql", {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRF-Token": csrfToken,
+    },
+    body: JSON.stringify({ query: mutation }),
+  });
+  const { data } = await response.json();
+  const result = data?.mergeRequestSetSubscription;
+  if (result?.errors?.length) throw new Error(result.errors.join(", "));
+  return result?.mergeRequest?.subscribed;
+};
+
 const insertButton = (mr, isSubscribed) => {
+  const info = parseMrInfo(mr);
+  let subscribed = isSubscribed;
+
   const button = document.createElement("button");
-  button.innerHTML = isSubscribed ? bellIcon : bellOffIcon;
+  button.innerHTML = subscribed ? bellIcon : bellOffIcon;
   button.classList.add(
     "hide-collapsed",
     "btn-icon",
@@ -59,6 +94,13 @@ const insertButton = (mr, isSubscribed) => {
     "btn-md",
     "btn-default-secondary",
   );
+
+  button.addEventListener("click", async () => {
+    button.disabled = true;
+    subscribed = await toggleSubscription(info.fullPath, info.iid, subscribed);
+    button.innerHTML = subscribed ? bellIcon : bellOffIcon;
+    button.disabled = false;
+  });
 
   const lastCell = mr.querySelector("[role='cell']:last-child > div");
   if (lastCell) lastCell.appendChild(button);
