@@ -26,9 +26,6 @@
       "js": [
         "src/inject/inject.js"
       ],
-      "css": [
-        "src/inject/inject.css"
-      ],
       "run_at": "document_idle"
     }
   ],
