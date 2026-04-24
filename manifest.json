@@ -1,6 +1,6 @@
 {
   "name": "GitLab Notifications Button",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "manifest_version": 3,
   "description": "An extension to add notification button to /dashboard/merge-requests",
   "homepage_url": "https://gitlab.com/abhayvashokan/gitlab-notifications-button",
